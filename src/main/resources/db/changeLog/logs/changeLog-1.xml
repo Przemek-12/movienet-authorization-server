@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+	<changeSet author="przemek" id="1636925942980-1">
+		<createTable tableName="hibernate_sequence">
+			<column name="next_val" type="BIGINT(20)" />
+		</createTable>
+		<createTable tableName="Permission">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints primaryKey="true"
+					primaryKeyName="PermissionPK" />
+			</column>
+			<column name="name" type="VARCHAR(255)">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="Role">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="RolePK" />
+			</column>
+			<column name="name" type="VARCHAR(255)" />
+		</createTable>
+		<createTable tableName="Role_Permissions">
+			<column name="Role_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="permissions_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<createTable tableName="User">
+			<column autoIncrement="true" name="id" type="BIGINT">
+				<constraints primaryKey="true" primaryKeyName="UserPK" />
+			</column>
+			<column name="email" type="VARCHAR(255)" />
+			<column name="login" type="VARCHAR(255)" />
+			<column name="password" type="VARCHAR(255)" />
+		</createTable>
+		<createTable tableName="User_Roles">
+			<column name="User_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+			<column name="roles_id" type="BIGINT">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+		<addPrimaryKey columnNames="Role_id, permissions_id"
+			tableName="Role_Permissions" />
+		<addPrimaryKey columnNames="User_id, roles_id"
+			tableName="User_Roles" />
+		<addUniqueConstraint columnNames="name"
+			constraintName="UC_PERMISSIONNAME_COL" tableName="Permission" />
+		<addUniqueConstraint columnNames="email"
+			constraintName="UC_USEREMAIL_COL" tableName="User" />
+		<addUniqueConstraint columnNames="login"
+			constraintName="UC_USERLOGIN_COL" tableName="User" />
+		<addForeignKeyConstraint
+			baseColumnNames="Role_id" baseTableName="Role_Permissions"
+			constraintName="FK_akd8skuq4c17sbdhpa9yvrhgo" deferrable="false"
+			initiallyDeferred="false" referencedColumnNames="id"
+			referencedTableName="Role" />
+		<addForeignKeyConstraint
+			baseColumnNames="User_id" baseTableName="User_Roles"
+			constraintName="FK_dv4w2xni693cg4ibi3fo1fkk6" deferrable="false"
+			initiallyDeferred="false" referencedColumnNames="id"
+			referencedTableName="User" />
+		<addForeignKeyConstraint
+			baseColumnNames="permissions_id" baseTableName="Role_Permissions"
+			constraintName="FK_ibnjcmfkplwwcrpbh0sdgdwq1" deferrable="false"
+			initiallyDeferred="false" referencedColumnNames="id"
+			referencedTableName="Permission" />
+		<addForeignKeyConstraint
+			baseColumnNames="roles_id" baseTableName="User_Roles"
+			constraintName="FK_tc5k40i3kit8944syrd366vy1" deferrable="false"
+			initiallyDeferred="false" referencedColumnNames="id"
+			referencedTableName="Role" />
+
+		<insert tableName="hibernate_sequence">
+			<column name="next_val" value="100" />
+		</insert>
+		<insert tableName="Role">
+			<column name="id" value="1" />
+			<column name="name" value="ROLE_USER" />
+		</insert>
+		<insert tableName="Role">
+			<column name="id" value="2" />
+			<column name="name" value="ROLE_ADMIN" />
+		</insert>
+	</changeSet>
+</databaseChangeLog>

@@ -7,6 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.auth.application.dto.AddUserResult;
@@ -26,11 +27,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleService roleService) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public ResponseEntity<AddUserResult> addUser(AddUserRequest request)
@@ -62,7 +65,9 @@ public class UserService {
     private LoginAndPassword decodeLoginAndPassword(LoginCredentials loginCredentials) {
         String decodedLoginAndPassword = new String(Base64.getDecoder().decode(loginCredentials.getLoginCredentials()));
         String[] creadentials = decodedLoginAndPassword.split(":");
-        return new LoginAndPassword(creadentials[0], creadentials[1]);
+        String login = creadentials[0];
+        String password = passwordEncoder.encode(creadentials[1]);
+        return new LoginAndPassword(login, password);
     }
 
     private void checkIfUserAlreadyExists(AddUserResult result, String login, String email) {
