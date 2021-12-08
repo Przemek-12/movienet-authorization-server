@@ -1,5 +1,8 @@
 package com.auth.application.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,18 +13,36 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AddUserResult {
 
-    private boolean validLogin = true;
-    private boolean validEmail = true;
+    private Map<String, String> errors = new HashMap<>();
 
-    public void invalidLogin() {
-        this.validLogin = false;
+    public Map<String, String> getErrors() {
+        return errors;
     }
 
-    public void invalidEmail() {
-        this.validEmail = false;
+    public void addError(Property property, ErrorMessage errorMessage) {
+        errors.put(property.getValue(), errorMessage.getValue());
     }
 
     public boolean allValid() {
-        return (validLogin && validEmail);
+        return errors.isEmpty();
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static enum Property {
+        
+        LOGIN("login"),
+        EMAIL("email");
+
+        private String value;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static enum ErrorMessage {
+
+        ALREADY_TAKEN("Already taken");
+
+        private String value;
     }
 }

@@ -11,16 +11,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.auth.application.dto.AddUserResult;
+import com.auth.application.dto.AddUserResult.ErrorMessage;
+import com.auth.application.dto.AddUserResult.Property;
 import com.auth.application.dto.LoginCredentials;
 import com.auth.application.exception.EntityObjectNotFoundException;
 import com.auth.application.exception.InvalidAttributeValueException;
-import com.auth.application.exception.UserNotFoundException;
 import com.auth.application.feign.dto.AddUserRequest;
 import com.auth.application.feign.dto.LoginAndPassword;
-import com.auth.application.feign.dto.UserDTO;
-import com.auth.domain.Role;
-import com.auth.domain.User;
-import com.auth.domain.UserRepository;
+import com.auth.domain.entity.Role;
+import com.auth.domain.entity.User;
+import com.auth.domain.repository.UserRepository;
 
 @Service
 public class UserService {
@@ -48,15 +48,6 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
     }
 
-    public UserDTO getUser(LoginCredentials loginCredentials) throws UserNotFoundException {
-        LoginAndPassword loginAndPassword = decodeLoginAndPassword(loginCredentials);
-        return mapToDTO(findByLoginAndPassword(loginAndPassword.getLogin(), loginAndPassword.getPassword()));
-    }
-
-    public UserDTO getUser(Long id) throws UserNotFoundException {
-        return mapToDTO(findById(id));
-    }
-
     public User getEntityByLogin(String login) throws EntityObjectNotFoundException {
         return userRepository.findByLogin(login)
                 .orElseThrow(() -> new EntityObjectNotFoundException(User.class.getSimpleName()));
@@ -72,10 +63,10 @@ public class UserService {
 
     private void checkIfUserAlreadyExists(AddUserResult result, String login, String email) {
         if (userExistsByLogin(login)) {
-            result.invalidLogin();
+            result.addError(Property.LOGIN, ErrorMessage.ALREADY_TAKEN);
         }
         if (userExistsByEmail(email)) {
-            result.invalidEmail();
+            result.addError(Property.EMAIL, ErrorMessage.ALREADY_TAKEN);
         }
     }
 
@@ -101,22 +92,6 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getUserRole());
         return roles;
-    }
-
-    private User findById(Long userId) throws UserNotFoundException {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-    }
-
-    private User findByLoginAndPassword(String login, String password) throws UserNotFoundException {
-        return userRepository.findByLoginAndPassword(login, password).orElseThrow(UserNotFoundException::new);
-    }
-
-    private UserDTO mapToDTO(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .login(user.getLogin())
-                .email(user.getEmail())
-                .build();
     }
 
 }

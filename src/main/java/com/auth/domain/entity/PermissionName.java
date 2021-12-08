@@ -1,4 +1,4 @@
-package com.auth.domain;
+package com.auth.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,7 +6,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum PermissionName {
 
-    WRITE("write");
+    WRITE("write"),
+    READ("read");
 
     @Getter
     private String value;

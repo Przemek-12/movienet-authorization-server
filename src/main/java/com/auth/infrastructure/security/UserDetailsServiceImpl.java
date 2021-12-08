@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.auth.application.UserService;
 import com.auth.application.exception.EntityObjectNotFoundException;
-import com.auth.domain.Role;
-import com.auth.domain.User;
+import com.auth.domain.entity.Role;
+import com.auth.domain.entity.User;
 
 @Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {

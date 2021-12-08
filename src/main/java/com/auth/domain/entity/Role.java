@@ -1,5 +1,6 @@
-package com.auth.domain;
+package com.auth.domain.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -34,5 +35,15 @@ public class Role {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Getter
-    private Set<Permission> permissions;
+    private Set<Permission> permissions = new HashSet<>();
+    
+    private Role(@NonNull RoleName name, @NonNull Set<Permission> permissions) {
+        this.name=name;
+        this.permissions.addAll(permissions);
+    }
+
+    public static Role create(@NonNull RoleName name, @NonNull Set<Permission> permissions) {
+        return new Role(name, permissions);
+    }
 }
+

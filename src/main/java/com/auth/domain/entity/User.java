@@ -1,4 +1,4 @@
-package com.auth.domain;
+package com.auth.domain.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -53,7 +53,7 @@ public class User {
     @Getter
     private Set<Role> roles = new HashSet<>();
 
-    public User(@NonNull String login, @NonNull String password,
+    private User(@NonNull String login, @NonNull String password,
             @NonNull String email, Set<Role> roles) throws InvalidAttributeValueException {
         checkIfRolesAreValid(roles);
         this.login = login;

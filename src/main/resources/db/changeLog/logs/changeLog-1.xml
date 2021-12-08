@@ -4,7 +4,7 @@
 	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-	<changeSet author="przemek" id="1636925942980-1">
+	<changeSet author="przemek" id="user,role,permission">
 		<createTable tableName="hibernate_sequence">
 			<column name="next_val" type="BIGINT(20)" />
 		</createTable>
@@ -13,9 +13,7 @@
 				<constraints primaryKey="true"
 					primaryKeyName="PermissionPK" />
 			</column>
-			<column name="name" type="VARCHAR(255)">
-				<constraints nullable="false" />
-			</column>
+			<column name="name" type="VARCHAR(255)" />
 		</createTable>
 		<createTable tableName="Role">
 			<column autoIncrement="true" name="id" type="BIGINT">
@@ -23,7 +21,7 @@
 			</column>
 			<column name="name" type="VARCHAR(255)" />
 		</createTable>
-		<createTable tableName="Role_Permissions">
+		<createTable tableName="Role_Permission">
 			<column name="Role_id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -39,7 +37,7 @@
 			<column name="login" type="VARCHAR(255)" />
 			<column name="password" type="VARCHAR(255)" />
 		</createTable>
-		<createTable tableName="User_Roles">
+		<createTable tableName="User_Role">
 			<column name="User_id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -48,9 +46,9 @@
 			</column>
 		</createTable>
 		<addPrimaryKey columnNames="Role_id, permissions_id"
-			tableName="Role_Permissions" />
+			tableName="Role_Permission" />
 		<addPrimaryKey columnNames="User_id, roles_id"
-			tableName="User_Roles" />
+			tableName="User_Role" />
 		<addUniqueConstraint columnNames="name"
 			constraintName="UC_PERMISSIONNAME_COL" tableName="Permission" />
 		<addUniqueConstraint columnNames="email"
@@ -58,22 +56,22 @@
 		<addUniqueConstraint columnNames="login"
 			constraintName="UC_USERLOGIN_COL" tableName="User" />
 		<addForeignKeyConstraint
-			baseColumnNames="Role_id" baseTableName="Role_Permissions"
+			baseColumnNames="Role_id" baseTableName="Role_Permission"
 			constraintName="FK_akd8skuq4c17sbdhpa9yvrhgo" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Role" />
 		<addForeignKeyConstraint
-			baseColumnNames="User_id" baseTableName="User_Roles"
+			baseColumnNames="User_id" baseTableName="User_Role"
 			constraintName="FK_dv4w2xni693cg4ibi3fo1fkk6" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="User" />
 		<addForeignKeyConstraint
-			baseColumnNames="permissions_id" baseTableName="Role_Permissions"
+			baseColumnNames="permissions_id" baseTableName="Role_Permission"
 			constraintName="FK_ibnjcmfkplwwcrpbh0sdgdwq1" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Permission" />
 		<addForeignKeyConstraint
-			baseColumnNames="roles_id" baseTableName="User_Roles"
+			baseColumnNames="roles_id" baseTableName="User_Role"
 			constraintName="FK_tc5k40i3kit8944syrd366vy1" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Role" />

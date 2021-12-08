@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.auth.domain.User;
+import com.auth.domain.entity.User;
 
 import lombok.NonNull;
 

@@ -1,4 +1,4 @@
-package com.auth.domain;
+package com.auth.domain.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,8 +24,17 @@ public class Permission {
     private Long id;
 
     @NonNull
-    @Column(unique = true, nullable = false)
+    @NotNull
+    @Column(unique = true)
     @Enumerated(EnumType.STRING)
     @Getter
     private PermissionName name;
+
+    private Permission(@NonNull PermissionName name) {
+        this.name = name;
+    }
+
+    public static Permission create(@NonNull PermissionName name) {
+        return new Permission(name);
+    }
 }

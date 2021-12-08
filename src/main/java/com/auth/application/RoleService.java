@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.auth.application.exception.EntityObjectNotFoundException;
-import com.auth.domain.Role;
-import com.auth.domain.RoleName;
-import com.auth.domain.RoleRepository;
+import com.auth.domain.entity.Role;
+import com.auth.domain.entity.RoleName;
+import com.auth.domain.repository.RoleRepository;
 
 @Service
 public class RoleService {

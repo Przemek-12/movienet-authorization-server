@@ -1,4 +1,4 @@
-package com.auth.domain;
+package com.auth.domain.entity;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,8 @@ import lombok.Getter;
 @Getter
 public enum RoleName {
 
-    ROLE_USER("ROLE_USER"), ROLE_ADMIN("ROLE_ADMIN");
+    ROLE_USER("ROLE_USER"),
+    ROLE_ADMIN("ROLE_ADMIN");
     
     private String value;
     

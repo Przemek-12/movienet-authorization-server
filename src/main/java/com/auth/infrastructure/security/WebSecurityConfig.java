@@ -83,7 +83,16 @@ public class WebSecurityConfig {
         public void configure(WebSecurity web) throws Exception {
             web.ignoring()
                     .mvcMatchers("/.well-known/jwks.json")
-                    .antMatchers("/.well-known/jwks.json");
+                    .antMatchers("/.well-known/jwks.json")
+                    .antMatchers(
+                            "/v2/api-docs",
+                            "/swagger-resources",
+                            "/swagger-resources/**",
+                            "/configuration/ui",
+                            "/configuration/security",
+                            "/swagger-ui.html",
+                            "/webjars/**",
+                            "/swagger-ui/**");
         }
     }
 
@@ -117,8 +126,10 @@ public class WebSecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.antMatcher("/**")
-                    .cors().and()
+            http
+                    .antMatcher("/**")
+//                    .cors()
+//                    .and()
                     .csrf().disable()
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
