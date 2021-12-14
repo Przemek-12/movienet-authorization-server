@@ -53,6 +53,11 @@ public class UserService {
                 .orElseThrow(() -> new EntityObjectNotFoundException(User.class.getSimpleName()));
     }
 
+    public void deleteUser(Long userId) throws EntityObjectNotFoundException {
+        checkIfUserExistsById(userId);
+        userRepository.deleteById(userId);
+    }
+
     private LoginAndPassword decodeLoginAndPassword(LoginCredentials loginCredentials) {
         String decodedLoginAndPassword = new String(Base64.getDecoder().decode(loginCredentials.getLoginCredentials()));
         String[] creadentials = decodedLoginAndPassword.split(":");
@@ -92,6 +97,12 @@ public class UserService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleService.getUserRole());
         return roles;
+    }
+
+    private void checkIfUserExistsById(Long userId) throws EntityObjectNotFoundException {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityObjectNotFoundException(User.class.getSimpleName());
+        }
     }
 
 }

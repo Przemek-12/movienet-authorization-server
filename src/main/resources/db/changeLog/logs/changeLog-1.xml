@@ -21,7 +21,7 @@
 			</column>
 			<column name="name" type="VARCHAR(255)" />
 		</createTable>
-		<createTable tableName="Role_Permission">
+		<createTable tableName="Role_Permissions">
 			<column name="Role_id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -37,7 +37,7 @@
 			<column name="login" type="VARCHAR(255)" />
 			<column name="password" type="VARCHAR(255)" />
 		</createTable>
-		<createTable tableName="User_Role">
+		<createTable tableName="User_Roles">
 			<column name="User_id" type="BIGINT">
 				<constraints nullable="false" />
 			</column>
@@ -46,9 +46,9 @@
 			</column>
 		</createTable>
 		<addPrimaryKey columnNames="Role_id, permissions_id"
-			tableName="Role_Permission" />
+			tableName="Role_Permissions" />
 		<addPrimaryKey columnNames="User_id, roles_id"
-			tableName="User_Role" />
+			tableName="User_Roles" />
 		<addUniqueConstraint columnNames="name"
 			constraintName="UC_PERMISSIONNAME_COL" tableName="Permission" />
 		<addUniqueConstraint columnNames="email"
@@ -56,22 +56,22 @@
 		<addUniqueConstraint columnNames="login"
 			constraintName="UC_USERLOGIN_COL" tableName="User" />
 		<addForeignKeyConstraint
-			baseColumnNames="Role_id" baseTableName="Role_Permission"
+			baseColumnNames="Role_id" baseTableName="Role_Permissions"
 			constraintName="FK_akd8skuq4c17sbdhpa9yvrhgo" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Role" />
 		<addForeignKeyConstraint
-			baseColumnNames="User_id" baseTableName="User_Role"
+			baseColumnNames="User_id" baseTableName="User_Roles"
 			constraintName="FK_dv4w2xni693cg4ibi3fo1fkk6" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="User" />
 		<addForeignKeyConstraint
-			baseColumnNames="permissions_id" baseTableName="Role_Permission"
+			baseColumnNames="permissions_id" baseTableName="Role_Permissions"
 			constraintName="FK_ibnjcmfkplwwcrpbh0sdgdwq1" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Permission" />
 		<addForeignKeyConstraint
-			baseColumnNames="roles_id" baseTableName="User_Role"
+			baseColumnNames="roles_id" baseTableName="User_Roles"
 			constraintName="FK_tc5k40i3kit8944syrd366vy1" deferrable="false"
 			initiallyDeferred="false" referencedColumnNames="id"
 			referencedTableName="Role" />

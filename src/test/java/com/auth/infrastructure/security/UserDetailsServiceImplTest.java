@@ -76,9 +76,11 @@ class UserDetailsServiceImplTest {
         assertThat(details.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals(RoleName.ROLE_ADMIN.getValue()))).isTrue();
         assertThat(details.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals(PermissionName.READ.getValue()))).isTrue();
+                .anyMatch(authority -> authority.getAuthority()
+                        .equals(RoleName.ROLE_USER.getValue() + "_" + PermissionName.READ.getValue()))).isTrue();
         assertThat(details.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals(PermissionName.WRITE.getValue()))).isTrue();
+                .anyMatch(authority -> authority.getAuthority()
+                        .equals(RoleName.ROLE_ADMIN.getValue() + "_" + PermissionName.WRITE.getValue()))).isTrue();
     }
 
 }

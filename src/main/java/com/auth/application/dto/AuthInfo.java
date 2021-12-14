@@ -1,11 +1,15 @@
 package com.auth.application.dto;
 
+import java.util.Set;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class AuthData {
+@Builder
+public class AuthInfo {
 
-    private String token;
+    private Set<String> roles;
 }

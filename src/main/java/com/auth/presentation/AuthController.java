@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.auth.application.AuthService;
 import com.auth.application.dto.AddUserResult;
+import com.auth.application.dto.AuthInfo;
 import com.auth.application.exception.EntityObjectNotFoundException;
 import com.auth.application.exception.InvalidAttributeValueException;
 import com.auth.application.feign.dto.AddUserRequest;
@@ -44,5 +45,10 @@ public class AuthController {
     @GetMapping("/check")
     public ResponseEntity<Void> checkAuth() {
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<AuthInfo> getAuthInfo() {
+        return ResponseEntity.ok().body(authService.getAuthInfo());
     }
 }

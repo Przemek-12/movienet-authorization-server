@@ -1,5 +1,8 @@
 package com.auth.application;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.auth.application.dto.AddUserResult;
+import com.auth.application.dto.AuthInfo;
 import com.auth.application.exception.EntityObjectNotFoundException;
 import com.auth.application.exception.InvalidAttributeValueException;
 import com.auth.application.feign.dto.AddUserRequest;
@@ -36,4 +40,14 @@ public class AuthService {
         tokenStore.removeAccessToken((DefaultOAuth2AccessToken) a.getCredentials());
     }
 
+    public AuthInfo getAuthInfo() {
+        Set<String> roles = SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream()
+                .map(authority -> authority.getAuthority())
+                .collect(Collectors.toSet());
+
+        return AuthInfo.builder()
+                .roles(roles)
+                .build();
+    }
 }
