@@ -138,7 +138,10 @@ public class WebSecurityConfig {
                     .anyRequest()
                     .authenticated()
                     .and()
-                    .addFilterBefore(new JWTFilter(getAuthenticationManager(), keyPair), JWTFilter.class);
+                    .addFilterBefore(
+                            new JWTFilter(getAuthenticationManager(), keyPair,
+                                    (UserDetailsServiceImpl) userDetailsService),
+                            JWTFilter.class);
         }
 
         @Override

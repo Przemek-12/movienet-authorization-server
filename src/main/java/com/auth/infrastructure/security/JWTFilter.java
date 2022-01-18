@@ -13,19 +13,25 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JWTFilter extends BasicAuthenticationFilter {
 
     private final KeyPair keyPair;
+    private final UserDetailsServiceImpl userDetailsService;
 
-    public JWTFilter(AuthenticationManager authenticationManager, KeyPair keyPair) {
+    public JWTFilter(AuthenticationManager authenticationManager, KeyPair keyPair,
+            UserDetailsServiceImpl userDetailsService) {
         super(authenticationManager);
         this.keyPair = keyPair;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -36,6 +42,7 @@ public class JWTFilter extends BasicAuthenticationFilter {
             UsernamePasswordAuthenticationToken authResult = getAuthenticationByToken(token);
             SecurityContextHolder.getContext().setAuthentication(authResult);
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized. Invalid token.");
             return;
         }
@@ -49,7 +56,8 @@ public class JWTFilter extends BasicAuthenticationFilter {
                 .setSigningKey(publicKey)
                 .parseClaimsJws(token)
                 .getBody();
+        UserDetails userDetails = userDetailsService.loadUserByUserId(claims.get("userId", Long.class));
         return new UsernamePasswordAuthenticationToken(
-                null, new DefaultOAuth2AccessToken(token), null);
+                userDetails, new DefaultOAuth2AccessToken(token), null);
     }
 }

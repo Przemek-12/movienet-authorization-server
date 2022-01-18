@@ -28,17 +28,32 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        User user = getUser(login);
-        Set<? extends GrantedAuthority> authorities = getAuthorities(user.getRoles());
-        return new UserDetailsImpl(user, authorities);
+        return mapToUserDetails(getUserByLogin(login));
     }
 
-    private User getUser(String login) {
+    public UserDetails loadUserByUserId(Long userId) throws UsernameNotFoundException {
+        return mapToUserDetails(getUserById(userId));
+    }
+
+    private User getUserByLogin(String login) {
         try {
             return userService.getEntityByLogin(login);
         } catch (EntityObjectNotFoundException e) {
             throw new UsernameNotFoundException(e.getMessage(), e);
         }
+    }
+
+    private User getUserById(Long userId) {
+        try {
+            return userService.getEntityById(userId);
+        } catch (EntityObjectNotFoundException e) {
+            throw new UsernameNotFoundException(e.getMessage(), e);
+        }
+    }
+
+    private UserDetailsImpl mapToUserDetails(User user) {
+        Set<? extends GrantedAuthority> authorities = getAuthorities(user.getRoles());
+        return new UserDetailsImpl(user, authorities);
     }
 
     private Set<? extends GrantedAuthority> getAuthorities(Set<Role> roles) {

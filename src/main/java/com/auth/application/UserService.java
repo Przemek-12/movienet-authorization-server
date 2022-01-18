@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,6 +17,7 @@ import com.auth.application.exception.EntityObjectNotFoundException;
 import com.auth.application.exception.InvalidAttributeValueException;
 import com.auth.application.feign.dto.AddUserRequest;
 import com.auth.application.feign.dto.LoginAndPassword;
+import com.auth.application.kafka.KafkaMessageProducer;
 import com.auth.domain.entity.Role;
 import com.auth.domain.entity.User;
 import com.auth.domain.repository.UserRepository;
@@ -28,12 +28,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaMessageProducer kafkaMessageProducer;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleService roleService, PasswordEncoder passwordEncoder,
+            KafkaMessageProducer kafkaMessageProducer) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
+        this.kafkaMessageProducer = kafkaMessageProducer;
     }
 
     public ResponseEntity<AddUserResult> addUser(AddUserRequest request)
@@ -43,9 +46,9 @@ public class UserService {
         checkIfUserAlreadyExists(result, loginAndPassword.getLogin(), request.getEmail());
         if (result.allValid()) {
             addUser(loginAndPassword, request);
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok().build();
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+        return ResponseEntity.ok(result);
     }
 
     public User getEntityByLogin(String login) throws EntityObjectNotFoundException {
@@ -53,9 +56,15 @@ public class UserService {
                 .orElseThrow(() -> new EntityObjectNotFoundException(User.class.getSimpleName()));
     }
 
+    public User getEntityById(Long userId) throws EntityObjectNotFoundException {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityObjectNotFoundException(User.class.getSimpleName()));
+    }
+
     public void deleteUser(Long userId) throws EntityObjectNotFoundException {
         checkIfUserExistsById(userId);
         userRepository.deleteById(userId);
+        kafkaMessageProducer.sendMessage("user-deleted", String.valueOf(userId));
     }
 
     private LoginAndPassword decodeLoginAndPassword(LoginCredentials loginCredentials) {
@@ -91,6 +100,7 @@ public class UserService {
                 request.getEmail(),
                 getInitialRoles());
         userRepository.save(user);
+        kafkaMessageProducer.sendMessage("user-added", String.valueOf(user.getId()));
     }
 
     private Set<Role> getInitialRoles() throws EntityObjectNotFoundException {

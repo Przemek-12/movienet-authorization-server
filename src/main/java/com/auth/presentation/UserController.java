@@ -26,7 +26,7 @@ public class UserController {
     public void deleteUser() {
         try {
             UserDetailsImpl details = (UserDetailsImpl) SecurityContextHolder.getContext()
-                    .getAuthentication().getDetails();
+                    .getAuthentication().getPrincipal();
             userService.deleteUser(details.getId());
         } catch (EntityObjectNotFoundException e) {
             throw new ResponseStatusException(e.getStatus(), e.getMessage(), e);
